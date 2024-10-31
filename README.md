@@ -1,4 +1,4 @@
-Program ini sebagai contoh untuk mengairi tanaman menggunakan jaringan painlessmesh perangkat terdiri dari :
+Program ini sebagai contoh untuk mengairi tanaman menggunakan jaringan painlessmesh, perangkat terdiri dari :
 - 1 buah esp32 devkitc v4 atau nodemcu v3 yang terhubung ke sensor
 - DHT22 sensor
 - Capacitive soil moisture sensor
