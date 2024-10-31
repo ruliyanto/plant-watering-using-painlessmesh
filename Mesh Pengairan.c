@@ -25,7 +25,6 @@
 int NilaiSoilMoisture;
 int KeadaanTanah; // Hasil mapping dari nilai pembacaan Sensor kelembaban tanah
 
-int Penghitung = 0; // Untuk menghitung berapa kali proses telah berjalan
 double Baca; // Untuk millis
 
 // Definisi untuk DHT 22
@@ -38,10 +37,11 @@ float SuhuUdara;
 #define   MESH_PASSWORD   "0011EEFF"
 #define   MESH_PORT       5555
 painlessMesh  mesh;
+
 Scheduler userScheduler; 
+
 #define Node "A1"
 String readings;
-
 
 void KirimPesan();
 
@@ -65,7 +65,6 @@ void receivedCallback( uint32_t from, String &msg)
   Serial.println(" %");
   Serial.print("Kelembaban Tanah : ");
   Serial.print(KeadaanTanah);
-  Serial.println(" hpa");
 }
 
 void newConnectionCallback(uint32_t nodeId)
@@ -85,7 +84,7 @@ void nodeTimeAdjustedCallback(int32_t offset)
 
 void setup()
 {
-  Serial.begin(115200); // setting kecepatan serial communication
+  Serial.begin(115200); 
   Serial.println("Inisialisasi perangkat");
   Baca = millis();
 
@@ -95,7 +94,6 @@ void setup()
   pinMode(PinDHT, INPUT);        // Assign Pin sebagai input untuk membaca sensor suhu dan kelembaban udara
   digitalWrite(PinPositif, LOW);  // Matikan sensor kelembaban
   
-  // mesh.setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE ); // all types on
   mesh.setDebugMsgTypes( ERROR | STARTUP );  // set before init() so that you can see startup messages
 
   mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
@@ -159,11 +157,7 @@ void loop()
   if(millis() - Baca >= 30000)  // jika timing terbaru - waktu awal >= 30 detik
   {
     BacaSensor(); // Baca data dari Capacitive Soil Moisture Sensor
-    Penghitung++;
-    Serial.printf("Proses ke : %d\n\n", Penghitung);
-    oled.printf("Proses ke : %d\n", Penghitung);
     Baca = millis();
   }
   
 }
-
