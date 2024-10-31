@@ -41,13 +41,12 @@ Task taskSendMessage( TASK_SECOND * 1 , TASK_FOREVER, &KirimPesan);
 
 void KirimPesan()
 {
-  String msg = "Pompa1"; // ini diganti dengan data sensor
+  String msg = "Pompa1"; 
   msg += mesh.getNodeId();
   mesh.sendBroadcast( msg );
   taskSendMessage.setInterval( random( TASK_SECOND * 1, TASK_SECOND * 5 ));
 }
 
-// Needed for painless library
 void receivedCallback( uint32_t from, String &msg) // Terima update dari jaringan
 {
   Serial.printf("startHere: Terima dari %u msg=%s\n", from, msg.c_str());
@@ -95,7 +94,6 @@ void setup()
   pinMode(PinPompa, OUTPUT); 
   digitalWrite(PinPompa, LOW); 
   
-  //mesh.setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE ); // all types on
   mesh.setDebugMsgTypes( ERROR | STARTUP );  // set before init() so that you can see startup messages
 
   mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
@@ -112,19 +110,8 @@ void setup()
 void loop() 
 {
   mesh.update();
-/*
-  if(NodeSensor == "A1" && Tanah >= 50)
-  {
-    delay(1000);
-    Serial.println("Mulai Menyiram");
-    digitalWrite(PinPompa, HIGH);
-    delay(15000);
-    digitalWrite(PinPompa, LOW);
-    Serial.println("Penyiraman selesai");
-    Penghitung++;
-    Serial.printf("Penyiraman ke %d\n", Penghitung);
-  }
-*/
+
+   // Jika pengirim adalah node A1 dan hasil pembacaan keadaan tanah pada A1 dibawah 50% dan pompa dalam keadaan mati maka hidupkan pompa
   if(NodeSensor == "A1" && Tanah <= 50 && StatusPompa == false)
   {
     Serial.printf("Menghidupkan Pompa, Status Pompa : %d\n", StatusPompa);
@@ -134,6 +121,7 @@ void loop()
     Serial.printf("Start : %ld, StatusPompa : %d\n", StartMillis, StatusPompa);
   }
 
+   // Jika pompa sudah menyala selama 15 detik maka matikan pompa (supaya tidak banjir)
   if(millis() - StartMillis >= 15000)  // jika timing terbaru - waktu awal >= 15 detik
   {
     Serial.printf("Milis : %ld\n", millis());
